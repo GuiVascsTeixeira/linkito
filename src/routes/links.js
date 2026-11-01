@@ -1,9 +1,10 @@
 const express = require('express');
 const db = require('../db');
 const gerarCodigo = require('../utils/codigo');
+const autenticar = require('../middleware/autenticar');
 
 const router = express.Router();
-const USUARIO_TESTE = 1; // temporário: será o usuário logado quando fizermos o login
+router.use(autenticar); // todas as rotas daqui exigem login
 
 function urlValida(texto) {
   try {
@@ -29,7 +30,7 @@ router.post('/', async (req, res) => {
     try {
       await db.query(
         'INSERT INTO links (usuario_id, url_original, codigo_curto) VALUES (?, ?, ?)',
-        [USUARIO_TESTE, url, codigo]
+        [req.usuarioId, url, codigo]
       );
       return res.status(201).json({
         codigo,
@@ -46,6 +47,43 @@ router.post('/', async (req, res) => {
   }
 
   res.status(500).json({ erro: 'Não foi possível gerar um código único, tente de novo' });
+});
+
+router.get('/', async (req, res) => {
+  try {
+    const [links] = await db.query(
+      `SELECT l.id, l.codigo_curto, l.url_original, l.criado_em,
+              COUNT(c.id) AS total_cliques
+       FROM links l
+       LEFT JOIN cliques c ON c.link_id = l.id
+       WHERE l.usuario_id = ?
+       GROUP BY l.id
+       ORDER BY l.criado_em DESC`,
+      [req.usuarioId]
+    );
+    res.json(links);
+  } catch (erro) {
+    console.error(erro);
+    res.status(500).json({ erro: 'Erro ao listar os links' });
+  }
+});
+
+router.delete('/:id', async (req, res) => {
+  try {
+    // o "AND usuario_id = ?" impede apagar o link de outra pessoa
+    const [resultado] = await db.query(
+      'DELETE FROM links WHERE id = ? AND usuario_id = ?',
+      [req.params.id, req.usuarioId]
+    );
+
+    if (resultado.affectedRows === 0) {
+      return res.status(404).json({ erro: 'Link não encontrado' });
+    }
+    res.status(204).end();
+  } catch (erro) {
+    console.error(erro);
+    res.status(500).json({ erro: 'Erro ao apagar o link' });
+  }
 });
 
 module.exports = router;

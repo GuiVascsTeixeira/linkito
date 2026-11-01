@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const db = require('./db');
 const linksRotas = require('./routes/links');
+const authRotas = require('./routes/auth');
 const { detectarNavegador, detectarDispositivo } = require('./utils/agente');
 
 const app = express();
@@ -20,6 +21,7 @@ app.get('/saude', async (req, res) => {
 });
 
 app.use('/links', linksRotas);
+app.use('/auth', authRotas);
 
 app.get('/:codigo', async (req, res) => {
   try {
