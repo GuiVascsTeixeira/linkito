@@ -10,6 +10,7 @@ const botaoEncurtar = document.getElementById('encurtar');
 const erro = document.getElementById('erro');
 const lista = document.getElementById('lista');
 const vazio = document.getElementById('vazio');
+const carregando = document.getElementById('carregando');
 
 try {
   const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
@@ -103,6 +104,8 @@ async function carregar() {
     vazio.classList.toggle('hidden', links.length > 0);
   } catch (err) {
     mostrarErro(err.message);
+  } finally {
+    carregando.classList.add('hidden');
   }
 }
 
