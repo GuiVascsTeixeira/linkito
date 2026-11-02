@@ -1,0 +1,30 @@
+CREATE DATABASE IF NOT EXISTS linkito
+  CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE linkito;
+
+CREATE TABLE usuarios (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nome VARCHAR(100) NOT NULL,
+  email VARCHAR(150) NOT NULL UNIQUE,
+  senha_hash VARCHAR(255) NOT NULL,
+  criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE links (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  usuario_id INT NOT NULL,
+  url_original VARCHAR(2048) NOT NULL,
+  codigo_curto VARCHAR(10) NOT NULL UNIQUE,
+  criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
+);
+
+CREATE TABLE cliques (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  link_id INT NOT NULL,
+  data_hora DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  navegador VARCHAR(50),
+  dispositivo VARCHAR(30),
+  FOREIGN KEY (link_id) REFERENCES links(id) ON DELETE CASCADE,
+  INDEX idx_cliques_link_data (link_id, data_hora)
+);
