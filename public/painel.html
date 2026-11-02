@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel · Linkito</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-slate-100">
+  <header class="bg-white shadow">
+    <div class="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between">
+      <h1 class="text-2xl font-bold text-indigo-600">Linkito</h1>
+      <div class="flex items-center gap-3 text-sm">
+        <span id="nome-usuario" class="text-slate-600"></span>
+        <button id="sair" type="button" class="text-slate-500 hover:text-red-600 font-medium">Sair</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-3xl mx-auto px-4 py-6 space-y-6">
+    <section class="bg-white rounded-2xl shadow p-5">
+      <h2 class="font-semibold mb-3">Encurtar um link</h2>
+      <form id="form" class="flex flex-col sm:flex-row gap-2">
+        <input id="url" type="url" required placeholder="https://exemplo.com/um-link-bem-grande"
+               class="flex-1 border rounded-lg px-3 py-2">
+        <button id="encurtar" type="submit"
+                class="bg-indigo-600 text-white font-semibold px-5 py-2 rounded-lg hover:bg-indigo-700 disabled:opacity-50">
+          Encurtar
+        </button>
+      </form>
+      <p id="erro" class="hidden text-sm text-red-600 mt-2"></p>
+    </section>
+
+    <section>
+      <h2 class="font-semibold mb-3">Seus links</h2>
+      <p id="carregando" class="text-slate-500 text-sm">Carregando seus links...</p>
+      <p id="vazio" class="hidden text-slate-500 text-sm">Você ainda não criou nenhum link.</p>
+      <ul id="lista" class="space-y-3"></ul>
+    </section>
+  </main>
+
+  <script src="js/api.js"></script>
+  <script src="js/painel.js"></script>
+</body>
+</html>

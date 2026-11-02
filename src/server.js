@@ -5,10 +5,13 @@ const db = require('./db');
 const linksRotas = require('./routes/links');
 const authRotas = require('./routes/auth');
 const { detectarNavegador, detectarDispositivo } = require('./utils/agente');
+const path = require('path');
+
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use(express.static(path.join(__dirname, '..', 'public')));
 
 app.get('/saude', async (req, res) => {
   try {

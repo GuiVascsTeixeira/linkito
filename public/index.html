@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Linkito</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-slate-100 flex items-center justify-center p-4">
+  <main class="w-full max-w-sm bg-white rounded-2xl shadow p-6">
+    <h1 class="text-3xl font-bold text-center text-indigo-600">Linkito</h1>
+    <p class="text-center text-slate-500 mb-6">Encurte links e veja quem clica.</p>
+
+    <div class="flex mb-6 bg-slate-100 rounded-lg p-1">
+      <button id="aba-login" type="button" class="flex-1 py-2 rounded-md text-sm font-semibold bg-white shadow">Entrar</button>
+      <button id="aba-cadastro" type="button" class="flex-1 py-2 rounded-md text-sm font-semibold text-slate-500">Criar conta</button>
+    </div>
+
+    <form id="form" class="space-y-4">
+      <div id="campo-nome" class="hidden">
+        <label class="block text-sm font-medium mb-1" for="nome">Nome</label>
+        <input id="nome" type="text" autocomplete="name" class="w-full border rounded-lg px-3 py-2">
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium mb-1" for="email">E-mail</label>
+        <input id="email" type="email" autocomplete="email" required class="w-full border rounded-lg px-3 py-2">
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium mb-1" for="senha">Senha</label>
+        <input id="senha" type="password" autocomplete="current-password" required class="w-full border rounded-lg px-3 py-2">
+        <p id="dica-senha" class="hidden text-xs text-slate-500 mt-1">Mínimo de 8 caracteres.</p>
+      </div>
+
+      <p id="erro" class="hidden text-sm text-red-600"></p>
+
+      <button id="enviar" type="submit" class="w-full bg-indigo-600 text-white font-semibold py-2 rounded-lg hover:bg-indigo-700 disabled:opacity-50">Entrar</button>
+    </form>
+  </main>
+
+  <script src="js/auth.js"></script>
+</body>
+</html>

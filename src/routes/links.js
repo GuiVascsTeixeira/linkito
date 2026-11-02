@@ -68,6 +68,56 @@ router.get('/', async (req, res) => {
   }
 });
 
+router.get('/:id/stats', async (req, res) => {
+  try {
+    // 1º: o link existe e é seu?
+    const [links] = await db.query(
+      'SELECT id, codigo_curto, url_original, criado_em FROM links WHERE id = ? AND usuario_id = ?',
+      [req.params.id, req.usuarioId]
+    );
+    if (links.length === 0) {
+      return res.status(404).json({ erro: 'Link não encontrado' });
+    }
+    const linkId = links[0].id;
+
+    // 2º: faz as perguntas ao caderno de visitas, todas de uma vez
+    const [[total], [porDia], [porDispositivo], [porNavegador]] = await Promise.all([
+      db.query('SELECT COUNT(*) AS total FROM cliques WHERE link_id = ?', [linkId]),
+      db.query(
+        `SELECT DATE_FORMAT(data_hora, '%Y-%m-%d') AS dia, COUNT(*) AS cliques
+         FROM cliques
+         WHERE link_id = ? AND data_hora >= DATE_SUB(CURDATE(), INTERVAL 29 DAY)
+         GROUP BY dia
+         ORDER BY dia`,
+        [linkId]
+      ),
+      db.query(
+        `SELECT dispositivo, COUNT(*) AS cliques
+         FROM cliques WHERE link_id = ?
+         GROUP BY dispositivo ORDER BY cliques DESC`,
+        [linkId]
+      ),
+      db.query(
+        `SELECT navegador, COUNT(*) AS cliques
+         FROM cliques WHERE link_id = ?
+         GROUP BY navegador ORDER BY cliques DESC`,
+        [linkId]
+      ),
+    ]);
+
+    res.json({
+      link: links[0],
+      total_cliques: total[0].total,
+      por_dia: porDia,
+      por_dispositivo: porDispositivo,
+      por_navegador: porNavegador,
+    });
+  } catch (erro) {
+    console.error(erro);
+    res.status(500).json({ erro: 'Erro ao buscar as estatísticas' });
+  }
+});
+
 router.delete('/:id', async (req, res) => {
   try {
     // o "AND usuario_id = ?" impede apagar o link de outra pessoa
